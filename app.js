@@ -252,4 +252,9 @@ $('#mat-khau').addEventListener('input', (e) => {
   if (e.target.value.trim().length >= DO_DAI_TU_THU) thuMo(false);
 });
 $('#nut-khoa').addEventListener('click', khoaLai);
-taiGoi().catch(() => {});
+taiGoi().catch((e) => {
+  // Chưa có file số liệu: nói rõ là mật khẩu đặt trên máy, không phải trên web
+  $('#bao').textContent = e.message.startsWith('Chưa có')
+    ? 'Chưa có số liệu. Mật khẩu được đặt trên máy tính (chạy bat-dau.ps1), web chỉ dùng để mở.'
+    : e.message;
+});
