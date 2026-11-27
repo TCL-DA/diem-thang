@@ -163,23 +163,23 @@ function dungThang(t, d) {
       <p class="nhan">${tenThang(t.thang)} · ${esc(n.vi_tri)} · ngạch ${esc(n.ngach)} – ${esc(n.bac)}</p>
       <h1 class="diem-lon">${so(t.diem, 2)}<small>/ ${so(t.nguong)} điểm</small></h1>
       <p class="than">Tiền điểm ước tính <b>${tien(t.tien.tong)}</b>${t.tien.vuot ? ` (gồm ${tien(t.tien.vuot)} phần vượt ngưỡng)` : ''}.
-        ${t.thieu_gio.length ? `Còn <b style="color:var(--vang)">${t.thieu_gio.length} thẻ chưa điền GIỜ THỰC</b> — điền là được tính điểm.` : ''}</p>
+        ${t.thieu_gio.length ? `Còn <b style="color:var(--vang)">${t.thieu_gio.length} thẻ chưa có giờ</b> — điền GIỜ ƯỚC là được tính điểm.` : ''}</p>
     </div>
     ${vong(t.phan_tram)}
   </section>
 
   <div class="o-so">
-    <div class="o xanh"><b>${so(t.diem_viec, 2)}</b><span>Điểm việc · ${t.viec.length} thẻ có giờ thực</span></div>
+    <div class="o xanh"><b>${so(t.diem_viec, 2)}</b><span>Điểm việc · ${t.viec.length} thẻ đã xong</span></div>
     <div class="o tim"><b>${so(t.diem_may, 2)}</b><span>Điểm máy · ${t.may.length} dòng việc tick</span></div>
     <div class="o"><b>${so(t.gio_quan_ly)} giờ</b><span>Giờ quản lý (trần ${n.so_nguoi_quan} người × 8 giờ)</span></div>
-    <div class="o vang"><b>${t.thieu_gio.length}</b><span>Thẻ chưa có giờ thực</span></div>
+    <div class="o vang"><b>${t.thieu_gio.length}</b><span>Thẻ chưa có giờ</span></div>
   </div>
 
   <section class="khoi">
     <h2>Cách tính</h2>
     <p class="mo-ta">Theo Quy chế lương, khoán và thưởng (ban hành 01/11/2026). Ngưỡng chỉ dùng để tính tiền điểm và xét bậc, không trừ lương cấp bậc.</p>
     <div class="cong-thuc">
-      <div><span>Điểm việc = giờ thực × ${p.he_so_gio_sang_diem}</span><b>${so(t.diem_viec, 2)}</b></div>
+      <div><span>Điểm việc = giờ thẻ (GIỜ ƯỚC, không có thì định mức theo loại thẻ) ÷ số người × ${p.he_so_gio_sang_diem}</span><b>${so(t.diem_viec, 2)}</b></div>
       <div><span>Điểm máy = Σ điểm điện của máy ÷ số dòng việc của list × dòng mình tick</span><b>${so(t.diem_may, 2)}</b></div>
       <div><span>Ngưỡng = (${p.gio_chuan_thang} − ${so(tru)} giờ QL) × ${p.ty_le_gio_san_xuat} × ${p.he_so_gio_sang_diem} × ${p.he_so_bac} (bậc) × ${p.he_so_ngach} (ngạch)</span><b>${so(t.nguong)}</b></div>
       <div><span>Tiền tới ngưỡng = MIN(điểm; ngưỡng) × ${tien(p.don_gia_diem)}</span><b>${tien(t.tien.toi_nguong)}</b></div>
@@ -188,8 +188,8 @@ function dungThang(t, d) {
   </section>
 
   <section class="khoi">
-    <h2>Thẻ chưa điền giờ thực (${t.thieu_gio.length})</h2>
-    <p class="mo-ta">Việc thiết kế, lập trình, bảo trì, mua hàng… chỉ được tính điểm khi thẻ có ô <b>GIỜ THỰC</b>. Bấm vào thẻ để mở trên Trello và điền.</p>
+    <h2>Thẻ chưa có giờ (${t.thieu_gio.length})</h2>
+    <p class="mo-ta">Thẻ thiết kế, lập trình… không có định mức sẵn, chỉ được tính điểm khi có ô <b>GIỜ ƯỚC</b>. Bảo trì, gửi hàng, mua hàng, việc phát sinh, gia công đã tự có định mức. Bấm vào thẻ để mở trên Trello và điền.</p>
     ${t.thieu_gio.length ? nhomTheoBoard(t.thieu_gio).map(([b, ds]) => `<div class="nhom">
       <h3>${esc(b)}<small>${ds.length} thẻ</small></h3>
       ${ds.map((x) => dong(x, `<span class="so">—</span>`, x.list)).join('')}
@@ -198,7 +198,7 @@ function dungThang(t, d) {
 
   <section class="khoi">
     <h2>Điểm việc (${t.viec.length})</h2>
-    ${t.viec.length ? t.viec.map((x) => dong(x, `<span class="so co">${so(x.gio_thuc)} giờ → ${so(x.diem, 2)}</span>`, `${x.board} · ${x.list}`)).join('') : '<p class="rong">Chưa có thẻ nào có giờ thực trong tháng.</p>'}
+    ${t.viec.length ? t.viec.map((x) => dong(x, `<span class="so co">${so(x.gio ?? x.gio_thuc, 2)} giờ → ${so(x.diem, 2)}</span>`, `${x.board} · ${x.list}${x.nguon_gio ? ' · ' + x.nguon_gio : ''}`)).join('') : '<p class="rong">Chưa có thẻ nào xong trong tháng.</p>'}
   </section>
 
   <section class="khoi">
