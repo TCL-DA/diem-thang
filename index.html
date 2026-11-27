@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b0d10">
+  <title>Điểm tháng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="./" aria-label="Điểm tháng">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="#3ddc97" stroke-width="2.2"/><path d="M10 4 A6 6 0 0 1 16 10" fill="none" stroke="#f5b93b" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span>Điểm tháng</span>
+    </a>
+    <nav class="thang" id="chon-thang" aria-label="Chọn tháng"></nav>
+    <button class="ghost" id="nut-khoa" type="button" hidden>Khoá lại</button>
+  </header>
+
+  <main>
+    <section class="man-khoa" id="man-khoa">
+      <p class="nhan">Riêng tư · đã mã hoá</p>
+      <h1 class="display">Điểm<br>tháng.</h1>
+      <p class="than">Điểm thẻ việc trên Trello theo quy chế lương, khoán và thưởng. Số liệu được mã hoá, mở bằng mật khẩu.</p>
+      <form class="mo" id="form-mo" autocomplete="off">
+        <label class="an-nhan" for="mat-khau">Mật khẩu</label>
+        <input id="mat-khau" type="password" inputmode="numeric" maxlength="32" placeholder="Mật khẩu" autocomplete="off" spellcheck="false">
+        <button class="nut" id="nut-mo" type="submit">Mở</button>
+      </form>
+      <p class="bao" id="bao" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="noi-dung" hidden></div>
+  </main>
+
+  <script src="app.js?v=1" type="module"></script>
+</body>
+</html>
