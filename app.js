@@ -43,16 +43,39 @@ function danKhoa(matKhau, goi) {
   });
 }
 
-async function giaiMa(matKhau) {
-  const goi = await taiGoi();
-  const raw = await danKhoa(matKhau, goi);
+// Ghi nhớ đăng nhập: chỉ lưu KHOÁ đã dẫn (không lưu mật khẩu), gắn với salt của gói số liệu.
+const KHOA_NHO = 'diem-thang-khoa';
+const b64 = (u8) => btoa(String.fromCharCode(...u8));
+const nhoKhoa = (raw, salt) => { try { localStorage.setItem(KHOA_NHO, JSON.stringify({ k: b64(raw), salt })); } catch { /* chế độ riêng tư */ } };
+const quenKhoa = () => { try { localStorage.removeItem(KHOA_NHO); } catch { /* bỏ qua */ } };
+const docKhoaNho = () => { try { return JSON.parse(localStorage.getItem(KHOA_NHO) || 'null'); } catch { return null; } };
+
+async function moBangKhoa(raw, goi) {
   const khoa = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
   try {
     const ro = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(goi.iv) }, khoa, unb64(goi.ct));
     return JSON.parse(new TextDecoder().decode(ro));
   } catch {
-    return null; // sai mật khẩu -> thẻ xác thực GCM không khớp
+    return null; // sai khoá -> thẻ xác thực GCM không khớp
   }
+}
+
+async function giaiMa(matKhau) {
+  const goi = await taiGoi();
+  const raw = new Uint8Array(await danKhoa(matKhau, goi));
+  const d = await moBangKhoa(raw, goi);
+  if (d) nhoKhoa(raw, goi.salt);
+  return d;
+}
+
+// Vào thẳng nếu trình duyệt đã nhớ khoá và gói số liệu vẫn dùng cùng salt
+async function tuMo() {
+  const nho = docKhoaNho();
+  if (!nho) return;
+  const goi = await taiGoi();
+  if (goi.salt !== nho.salt) { quenKhoa(); return; }
+  const d = await moBangKhoa(unb64(nho.k), goi);
+  if (d) moTrang(d); else quenKhoa();
 }
 
 // tay = true: bấm Enter / nút -> sai thì báo. tay = false: thử ngầm khi đang gõ -> sai thì im lặng.
@@ -236,6 +259,7 @@ function moTrang(d) {
 }
 
 function khoaLai() {
+  quenKhoa();
   duLieu = null;
   $('#noi-dung').innerHTML = '';
   $('#noi-dung').hidden = true;
@@ -252,7 +276,7 @@ $('#mat-khau').addEventListener('input', (e) => {
   if (e.target.value.trim().length >= DO_DAI_TU_THU) thuMo(false);
 });
 $('#nut-khoa').addEventListener('click', khoaLai);
-taiGoi().catch((e) => {
+tuMo().catch((e) => {
   // Chưa có file số liệu: nói rõ là mật khẩu đặt trên máy, không phải trên web
   $('#bao').textContent = e.message.startsWith('Chưa có')
     ? 'Chưa có số liệu. Mật khẩu được đặt trên máy tính (chạy bat-dau.ps1), web chỉ dùng để mở.'
