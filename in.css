@@ -1,0 +1,88 @@
+/* Bản in A4 có màu — chỉ hiện khi in / Lưu thành PDF. Phẳng: không gradient, không đổ bóng, không vạch màu mép. */
+#ban-in { display: none; }
+
+@page {
+  size: A4 portrait;
+  margin: 13mm 12mm 15mm;
+  @bottom-right { content: "Trang " counter(page) " / " counter(pages); font: 500 8pt 'Fira Sans', sans-serif; color: #6b7280; }
+  @bottom-left { font: 400 8pt 'Fira Sans', sans-serif; color: #6b7280; }
+}
+
+@media print {
+  html, body { background: #fff !important; }
+  body > *:not(#ban-in) { display: none !important; }
+  #ban-in { display: block; color: #1f2328; font: 400 9.5pt/1.45 'Fira Sans', 'Segoe UI', Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #ban-in * { box-sizing: border-box; hyphens: manual; overflow-wrap: normal; word-break: normal; }
+  #ban-in p, #ban-in li, #ban-in td, #ban-in span, #ban-in small { text-wrap: pretty; }
+  #ban-in h2, #ban-in h3, #ban-in th { text-wrap: balance; }
+  #ban-in h2, #ban-in h3 { break-after: avoid; }
+  #ban-in tr, #ban-in li, #ban-in .bi-o, #ban-in .giu, #ban-in .bi-hai > div, #ban-in .bi-dau { break-inside: avoid; }
+  #ban-in p { orphans: 3; widows: 3; }
+
+  .bi-trang.bi-moi { break-before: page; }
+  .bi-dau { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #fff; margin-bottom: 10px; }
+  .bi-dau p { margin: 0; font-size: 8.5pt; opacity: .92; }
+  .bi-dau h2 { margin: 2px 0 3px; font-size: 19pt; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; }
+  .bi-logo { font: 700 11pt 'Fira Sans', sans-serif; letter-spacing: .08em; text-align: right; white-space: nowrap; }
+  .bi-logo small { display: block; font-weight: 400; font-size: 8pt; letter-spacing: .02em; opacity: .9; }
+
+  .bi-o4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 9px; }
+  .bi-o { border: 1px solid color-mix(in srgb, var(--m) 35%, white); background: color-mix(in srgb, var(--m) 9%, white); border-radius: 8px; padding: 8px 10px; }
+  .bi-o b { display: block; font: 600 14pt/1.15 'Fira Code', Consolas, monospace; color: var(--m); white-space: nowrap; }
+  .bi-o span { display: block; font-size: 7.8pt; color: #4b5563; margin-top: 2px; }
+
+  .bi-thanh { position: relative; height: 12px; background: #e8ebef; border-radius: 6px; margin: 4px 0 20px; }
+  .bi-thanh i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; }
+  .bi-thanh b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #1f2328; }
+  .bi-thanh span { position: absolute; top: 15px; transform: translateX(-50%); font-size: 7pt; color: #4b5563; }
+
+  h3 { display: block; font-size: 11.5pt; font-weight: 700; margin: 12px 0 5px; color: #111827; }
+  h3 small { font-size: 8pt; font-weight: 400; color: #6b7280; margin-left: 8px; white-space: nowrap; }
+  #ban-in .nb { white-space: nowrap; }
+  .bi-ghi { font-size: 8pt; color: #6b7280; margin: 4px 0 0; }
+  .bi-rong { color: #6b7280; font-style: italic; }
+
+  .bi-hai { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .bi-tich { list-style: none; padding: 0; margin: 0; display: grid; gap: 5px; }
+  .bi-tich li { display: grid; grid-template-columns: 10px 1fr; gap: 8px; align-items: start; padding: 6px 8px; background: #f6f7f9; border-radius: 7px; }
+  .bi-tich li > i { width: 10px; height: 10px; border-radius: 50%; margin-top: 3px; }
+  .bi-tich li > div > b { display: block; font-size: 9.8pt; }
+  .bi-tich li > div > span { display: block; font-size: 8.5pt; }
+  .bi-tich li > div > small { display: block; font-size: 7.5pt; color: #6b7280; }
+  .bi-chu-giai > span { white-space: nowrap; }
+
+  .bi-lich { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .bi-lich > span { font-size: 7pt; color: #6b7280; text-align: center; }
+  .bi-lich > i { font-style: normal; height: 27px; border-radius: 5px; background: #f1f3f5; font-size: 7.5pt; color: #4b5563; padding: 2px 4px; position: relative; }
+  .bi-lich > i:empty { background: transparent; }
+  .bi-lich > i small { position: absolute; right: 4px; bottom: 2px; font: 600 7pt 'Fira Code', monospace; }
+
+  .bi-cot { display: grid; gap: 5px; margin-top: 2px; }
+  .bi-cot > div { display: grid; grid-template-columns: 26px 1fr; column-gap: 6px; row-gap: 2px; }
+  .bi-cot > div > span { grid-row: span 4; font: 600 8pt 'Fira Code', monospace; color: #4b5563; align-self: center; }
+  .bi-cot p { margin: 0; display: flex; align-items: center; gap: 5px; height: 8px; }
+  .bi-cot p i { height: 8px; border-radius: 3px; min-width: 2px; }
+  .bi-cot p small { font: 500 6.8pt 'Fira Code', monospace; color: #4b5563; }
+  .bi-chu-giai { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 8pt; }
+  .bi-chu-giai i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+
+  .bi-bang { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 8.6pt; }
+  .bi-bang thead { display: table-header-group; }
+  .bi-bang th { background: #eef1f4; color: #374151; font-size: 7.4pt; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; text-align: left; padding: 5px 6px; }
+  .bi-bang td { padding: 4px 6px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  .bi-bang tbody tr:nth-child(even) td { background: #fafbfc; }
+  .bi-bang td b { font-weight: 600; }
+  .bi-bang td > span:not(.nb) { display: block; font-size: 7.6pt; color: #6b7280; margin-top: 1px; }
+  .bi-bang .bi-so { text-align: right; font-family: 'Fira Code', Consolas, monospace; white-space: nowrap; }
+  .bi-bang .bi-mo { color: #9ca3af; font-family: 'Fira Code', monospace; font-size: 7.6pt; }
+  .bi-bang .nguon { font-size: 7.8pt; color: #374151; }
+  .bi-bang.ct td:first-child { font-size: 8.4pt; }
+  .bi-bang .bi-cham { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+  .bi-bang .bi-hang { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: #fff; font: 700 8.5pt 'Fira Code', monospace; }
+
+  .bi-ty { position: relative; height: 14px; background: #eef1f4; border-radius: 4px; }
+  .bi-ty i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+  .bi-ty em { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #1f2328; }
+  .bi-ty span { position: absolute; right: 4px; top: 0; font: 600 7.6pt/14px 'Fira Code', monospace; color: #1f2328; }
+}

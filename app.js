@@ -2,6 +2,7 @@
 // Số liệu chỉ nằm trong du-lieu.enc.json (AES-GCM 256, khoá Argon2id). Tự kiểm số liệu mới mỗi 5 phút / khi quay lại tab,
 // cập nhật tại chỗ và GIỮ NGUYÊN vị trí đang xem (neo theo phần tử đầu màn hình, không chạy lại hiệu ứng vào cảnh).
 import * as H from './hieu-ung.js?v=7';
+import { xuatPDF } from './ban-in.js?v=1';
 
 const $ = (s, g = document) => g.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -485,6 +486,11 @@ $('#nut-hu').addEventListener('click', () => {
   const bat = !H.batHieuUng(); datHieuUng(bat);
   $('#nut-hu svg').classList.remove('hv-xoay-3d'); void $('#nut-hu svg').offsetWidth; $('#nut-hu svg').classList.add('hv-xoay-3d');
   H.bao(bat ? 'Đã bật hiệu ứng' : 'Đã tắt hiệu ứng — số liệu hiện ngay');
+});
+$('#nut-pdf').addEventListener('click', () => {
+  if (!duLieu?.nguoi) return;
+  xuatPDF({ d: duLieu, i: thangI, view, MAU, thanhTichTo, thanhTichNguoi });
+  H.bao(view === 'home' ? 'Đang mở bản in cả tổ — chọn "Lưu thành PDF"' : 'Đang mở bản in — chọn "Lưu thành PDF"');
 });
 $('#len-dau').addEventListener('click', () => scrollTo({ top: 0, behavior: H.batHieuUng() ? 'smooth' : 'auto' }));
 document.addEventListener('visibilitychange', () => { if (!document.hidden) kiemMoi(); });

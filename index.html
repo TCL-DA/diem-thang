@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&display=swap&subset=vietnamese" rel="stylesheet">
   <link rel="stylesheet" href="app.css?v=7">
+  <link rel="stylesheet" href="in.css?v=1">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -27,6 +28,10 @@
       <button class="nut-phu" id="nut-hu" type="button" aria-pressed="true" title="Bật / tắt hiệu ứng">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
         <span>Hiệu ứng</span>
+      </button>
+      <button class="nut-phu" id="nut-pdf" type="button" title="Xuất PDF A4 có màu (trang đang xem; ở Home là cả tổ)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>PDF</span>
       </button>
       <button class="nut-phu" id="nut-khoa" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -58,6 +63,6 @@
   <div class="toast-khu" id="toast" role="status" aria-live="polite"></div>
   <button class="len-dau" id="len-dau" type="button" aria-label="Lên đầu trang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
-  <script src="app.js?v=8" type="module"></script>
+  <script src="app.js?v=9" type="module"></script>
 </body>
 </html>
