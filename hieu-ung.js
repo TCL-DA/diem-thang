@@ -239,11 +239,18 @@ export function theoChuot() {
   }, { passive: true });
 }
 
-// ---- Hạt bay nền + nối dây (canvas, dừng khi tab ẩn / tắt hiệu ứng)
+// ---- Tạm dừng nền khi đang cuộn / vuốt tab (nhường hết khung hình cho thao tác tay)
+let tamDung = false;
+export const datTamDung = (b) => { tamDung = b; }; // chỉ dừng canvas (đổi class lúc cuộn sẽ bắt tính lại style = giật)
+
+// ---- Hạt bay nền + nối dây (canvas, dừng khi tab ẩn / tắt hiệu ứng / đang cuộn-vuốt)
+// Điện thoại: vẽ 1x (không nhân DPR) và 30 khung/giây — mắt không thấy khác, nhẹ ~4 lần.
 export function hatNen(cv) {
   const ctx = cv.getContext('2d');
-  let w, h, hat = [], chay = true;
-  const dpr = Math.min(2, devicePixelRatio || 1);
+  let w, h, hat = [], chay = true, lanTruoc = 0;
+  const dt = matchMedia('(pointer:coarse)').matches;
+  const dpr = dt ? 1 : Math.min(2, devicePixelRatio || 1);
+  const KHUNG = dt ? 1000 / 30 : 0;
   const co = () => {
     w = cv.width = innerWidth * dpr; h = cv.height = innerHeight * dpr;
     const n = Math.round(Math.min(70, innerWidth / 22));
@@ -251,9 +258,11 @@ export function hatNen(cv) {
   };
   co(); addEventListener('resize', co, { passive: true });
   document.addEventListener('visibilitychange', () => { chay = !document.hidden; if (chay) requestAnimationFrame(ve); });
-  const ve = () => {
+  const ve = (t = 0) => {
     if (!chay) return;
     if (!batHieuUng()) { ctx.clearRect(0, 0, w, h); setTimeout(() => requestAnimationFrame(ve), 500); return; }
+    if (tamDung || (KHUNG && t - lanTruoc < KHUNG)) { requestAnimationFrame(ve); return; }
+    lanTruoc = t;
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = 'rgba(160,175,190,.55)';
     for (const p of hat) {

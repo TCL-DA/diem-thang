@@ -1,7 +1,7 @@
 // Điểm tháng · Tổ điện — mở khoá bằng mật khẩu, giải mã trong trình duyệt, dựng trang Home + 4 tab người.
 // Số liệu chỉ nằm trong du-lieu.enc.json (AES-GCM 256, khoá Argon2id). Tự kiểm số liệu mới mỗi 5 phút / khi quay lại tab,
 // cập nhật tại chỗ và GIỮ NGUYÊN vị trí đang xem (neo theo phần tử đầu màn hình, không chạy lại hiệu ứng vào cảnh).
-import * as H from './hieu-ung.js?v=7';
+import * as H from './hieu-ung.js?v=8';
 import { moHopPDF } from './ban-in.js?v=2';
 
 const $ = (s, g = document) => g.querySelector(s);
@@ -355,7 +355,15 @@ function neo() { // phần tử [data-k] đầu tiên còn thấy dưới thanh 
   }
   return null;
 }
-function ve({ vao = false, giu = false, huong = 0 } = {}) {
+// Đặt ngay trạng thái CUỐI của vòng %, thanh, cột, chữ gõ (không chạy hiệu ứng) — dùng cho trang dựng sẵn khi vuốt tab.
+function chotTinh(goc) {
+  goc.querySelectorAll('circle.chay[data-den]').forEach((c) => { c.style.transition = 'none'; c.style.strokeDashoffset = c.dataset.den; });
+  goc.querySelectorAll('.bullet .dat').forEach((b) => { b.style.transition = 'none'; b.style.transform = `scaleX(${b.dataset.scale})`; });
+  goc.querySelectorAll('.cot').forEach((c) => { c.style.transition = 'none'; c.style.transform = 'scaleY(1)'; });
+  goc.querySelectorAll('.go-may').forEach((el) => { el.textContent = el.dataset.go; });
+  goc.querySelectorAll('[data-lo]').forEach((el) => el.classList.add('da-lo'));
+}
+function ve({ vao = false, giu = false, huong = 0, tinh = false } = {}) {
   const nd = $('#noi-dung');
   const n = giu ? neo() : null;
   const y = scrollY;
@@ -373,7 +381,10 @@ function ve({ vao = false, giu = false, huong = 0 } = {}) {
     } else scrollTo(0, y);
   }
   if (huong && H.batHieuUng()) { nd.classList.remove('vao-trai', 'vao-phai'); void nd.offsetWidth; nd.classList.add(huong > 0 ? 'vao-phai' : 'vao-trai'); }
-  chayDuLieu(nd, { vao, giu });
+  if (tinh) { // vừa vuốt sang: trang đã hiện sẵn ở trạng thái cuối -> giữ y nguyên, không đếm lại từ 0
+    chotTinh(nd);
+    soCu = new Map([...nd.querySelectorAll('[data-dem]')].map((el, i) => [(el.closest('[data-k]')?.dataset.k || '') + ':' + i, Number(el.dataset.dem)]));
+  } else chayDuLieu(nd, { vao, giu });
   H.theoDoi(nd);
 }
 function chayDuLieu(nd, { vao, giu }) {
@@ -438,6 +449,103 @@ function doiView(moi) {
   scrollTo(0, cuon[moi] || 0);
 }
 addEventListener('hashchange', () => { const v = location.hash.slice(1); if (THU_TU.includes(v)) doiView(v); });
+
+// ---------------- Vuốt ngang chuyển tab (điện thoại) ----------------
+// Kéo tới đâu, tab kế bên hiện ra tới đó: tab kế bên dựng SẴN (trạng thái cuối, không hiệu ứng) trong một lớp cố định,
+// cả hai chỉ dịch bằng transform (GPU, không dựng lại bố cục). Thả: qua 28% bề ngang hoặc vuốt nhanh -> sang tab; không thì bật về.
+// Trong lúc kéo/cuộn: dừng hạt nền + hiệu ứng lặp (H.datTamDung) để mọi khung hình dành cho ngón tay.
+const vuot = { x0: 0, y0: 0, t0: 0, dx: 0, truc: null, ke: null, lop: null, w: 0, bat: false, mau: [] };
+function cuonNgangDuoc(el) {
+  for (let e = el; e && e.id !== 'noi-dung'; e = e.parentElement) {
+    if (e.scrollWidth > e.clientWidth + 2 && /(auto|scroll)/.test(getComputedStyle(e).overflowX)) return true;
+  }
+  return false;
+}
+function dungLop(ma) {
+  const nd = $('#noi-dung'), r = nd.getBoundingClientRect();
+  const p = duLieu.nguoi.find((x) => x.ma === ma);
+  H.datLai(THU_TU.indexOf(ma));
+  const lop = document.createElement('div');
+  lop.className = 'lop-vuot';
+  const trong = document.createElement('div');
+  trong.className = 'khong-vao';
+  trong.style.cssText = `position:absolute;box-sizing:border-box;left:${r.left}px;width:${r.width}px;top:${r.top + scrollY - (cuon[ma] || 0)}px;max-width:none;margin:0`;
+  trong.innerHTML = p ? veNguoi(p) : veHome();
+  trong.querySelectorAll('[data-k]').forEach((el) => el.removeAttribute('data-k')); // không làm rối neo giữ vị trí
+  lop.appendChild(trong);
+  document.body.appendChild(lop);
+  chotTinh(trong);
+  return lop;
+}
+function datVi(dx, chuyen = '') {
+  const nd = $('#noi-dung');
+  nd.style.transition = chuyen;
+  nd.style.transform = dx ? `translate3d(${dx}px,0,0)` : '';
+  if (vuot.lop) { vuot.lop.style.transition = chuyen; vuot.lop.style.transform = `translate3d(${dx + (dx < 0 ? vuot.w : -vuot.w)}px,0,0)`; }
+}
+function donVuot() {
+  const nd = $('#noi-dung');
+  nd.style.transition = ''; nd.style.transform = ''; nd.style.willChange = '';
+  vuot.lop?.remove(); vuot.lop = null; vuot.ke = null; vuot.bat = false;
+  document.documentElement.classList.remove('dang-vuot');
+  H.datTamDung(false);
+}
+document.addEventListener('touchstart', (e) => {
+  if (!duLieu || e.touches.length !== 1 || document.querySelector('#hop-pdf[open]')) return;
+  const t = e.touches[0];
+  if (!e.target.closest('#noi-dung') || t.clientX < 16 || t.clientX > innerWidth - 16 || cuonNgangDuoc(e.target)) return;
+  Object.assign(vuot, { x0: t.clientX, y0: t.clientY, t0: performance.now(), dx: 0, truc: null, w: innerWidth, bat: true, mau: [] });
+}, { passive: true });
+document.addEventListener('touchmove', (e) => {
+  if (!vuot.bat) return;
+  const t = e.touches[0], dx = t.clientX - vuot.x0, dy = t.clientY - vuot.y0;
+  if (!vuot.truc) {
+    if (Math.abs(dx) < 9 && Math.abs(dy) < 9) return;
+    vuot.truc = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'ngang' : 'doc';
+    if (vuot.truc === 'doc') { vuot.bat = false; return; }
+    H.datTamDung(true);
+    document.documentElement.classList.add('dang-vuot');
+    $('#noi-dung').style.willChange = 'transform';
+  }
+  e.preventDefault(); // đã khoá trục ngang -> không cho trang cuộn dọc theo
+  const i = THU_TU.indexOf(view), keMoi = dx < 0 ? THU_TU[i + 1] : THU_TU[i - 1];
+  if (keMoi !== vuot.ke) { vuot.lop?.remove(); vuot.ke = keMoi; vuot.lop = keMoi ? dungLop(keMoi) : null; }
+  vuot.dx = keMoi ? dx : dx * 0.28; // hết tab: kéo nặng tay (cao su)
+  const bay = performance.now();
+  vuot.mau.push([bay, t.clientX]); if (vuot.mau.length > 5) vuot.mau.shift();
+  datVi(vuot.dx);
+}, { passive: false });
+function thaVuot() {
+  if (!vuot.bat || vuot.truc !== 'ngang') { vuot.bat = false; return; }
+  vuot.bat = false;
+  const m = vuot.mau, v = m.length > 1 ? (m[m.length - 1][1] - m[0][1]) / Math.max(1, m[m.length - 1][0] - m[0][0]) : 0; // px/ms
+  const sang = vuot.ke && (Math.abs(vuot.dx) > vuot.w * 0.28 || (Math.abs(v) > 0.45 && Math.sign(v) === Math.sign(vuot.dx) && Math.abs(vuot.dx) > 30));
+  const chuyen = 'transform .28s cubic-bezier(.2,.8,.2,1)';
+  if (!sang) { datVi(0, chuyen); setTimeout(donVuot, 290); return; }
+  const moi = vuot.ke;
+  datVi(vuot.dx < 0 ? -vuot.w : vuot.w, chuyen);
+  setTimeout(() => {
+    cuon[view] = scrollY;
+    view = moi;
+    history.replaceState(null, '', '#' + moi);
+    const nd = $('#noi-dung'); nd.style.transition = 'none'; nd.style.transform = '';
+    ve({ tinh: true });
+    scrollTo(0, cuon[moi] || 0);
+    vuot.lop?.remove(); vuot.lop = null; vuot.ke = null; nd.style.willChange = '';
+    document.documentElement.classList.remove('dang-vuot');
+    H.datTamDung(false);
+    if (navigator.vibrate) navigator.vibrate(6);
+  }, 290);
+}
+document.addEventListener('touchend', thaVuot, { passive: true });
+document.addEventListener('touchcancel', thaVuot, { passive: true });
+// Đang cuộn dọc: tạm dừng hạt nền tới khi ngừng 160 ms
+let choNgungCuon = null;
+addEventListener('scroll', () => {
+  if (!matchMedia('(pointer:coarse)').matches) return;
+  H.datTamDung(true); clearTimeout(choNgungCuon);
+  choNgungCuon = setTimeout(() => { if (!vuot.bat) H.datTamDung(false); }, 160);
+}, { passive: true });
 document.addEventListener('click', (e) => {
   H.gonSong(e);
   const b = e.target.closest('#chon-thang button');

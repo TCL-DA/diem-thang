@@ -88,7 +88,11 @@ main, .dau, .tab-duoi { position: relative; z-index: 2; }
 @keyframes hu-lac { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
 
 /* ---------- Nội dung ---------- */
-#noi-dung { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+#noi-dung { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; touch-action: pan-y pinch-zoom; }
+/* Vuốt tab: lớp dựng sẵn tab kế bên, chỉ dịch bằng transform (GPU) */
+.lop-vuot { position: fixed; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; will-change: transform; contain: strict; }
+.lop-vuot > div { padding: 24px 16px 64px; }
+.dang-vuot [class*="hl-"], .dang-vuot .luoi-nen { animation-play-state: paused !important; }
 .vung { margin-top: 36px; }
 .vung > h2 { display: flex; align-items: baseline; gap: 12px; font-size: 22px; font-weight: 500; margin: 0 0 6px; letter-spacing: -.01em; }
 .vung > h2 small { font-size: 14px; color: var(--mo); font-weight: 400; }
