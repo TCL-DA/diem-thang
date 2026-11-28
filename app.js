@@ -83,6 +83,9 @@ let choThu = null;
 const baoSai = (o) => { $('#bao').textContent = 'Sai mật khẩu.'; o.select(); };
 
 async function thuMo(tay = false) {
+  // Trang đã mở: bỏ qua. Chrome có thể tự điền mật khẩu đã lưu vào ô (đang ẩn) bất cứ lúc nào,
+  // trước đây làm trang dựng lại + nhảy lên đầu.
+  if (duLieu) return;
   const o = $('#mat-khau');
   const mk = o.value.trim();
   if (mk.length < DO_DAI_TU_THU) {
@@ -248,7 +251,9 @@ function chonThang(i) {
 }
 
 function moTrang(d) {
+  if (duLieu) return; // đã mở rồi — không dựng lại, không cuộn
   duLieu = d;
+  $('#mat-khau').value = '';
   $('#chon-thang').innerHTML = d.thang.map((t, i) => `<button type="button" data-i="${i}">${tenThang(t.thang).replace('Tháng ', 'T')}</button>`).join('');
   $('#chon-thang').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => chonThang(Number(b.dataset.i))));
   $('#man-khoa').hidden = true;
