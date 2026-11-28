@@ -259,7 +259,7 @@ function lichNhiet(m, viec, kp) {
 }
 const dongThe = (x, i, mau) => `<a class="dong ${i < 12 ? H.vao(i * 35) : ''} ${H.re()}" data-k="t-${esc(x.link)}" href="${esc(x.link)}" target="_blank" rel="noopener">
   <span class="ngay-the">${ngayVN(x.ngay)}${(Date.now() - new Date(x.ngay)) < 2 * 864e5 ? ' <i class="moi hl-phat"></i>' : ''}</span>
-  <span class="ten-the"><b>${mau ? `<i class="cham-nho" style="background:${mau}"></i>` : ''}${esc(x.ten)}</b><span>${esc(x.board)} · ${esc(x.list)}${x.nguon_gio ? ' · ' + esc(x.nguon_gio) : ''}</span></span>
+  <span class="ten-the"><b>${mau ? `<i class="cham-nho" style="background:${mau}"></i>` : ''}${esc(x.ten)}</b><span>${esc(x.board)} · ${esc(x.list)}${x.nguon_gio ? ' · ' + esc(String(x.nguon_gio).startsWith('cong-doan-chua-dinh-muc') ? 'chưa có định mức công đoạn' : x.nguon_gio) : ''}</span></span>
   <span class="diem-the">${so(x.diem, 2)}<small>${so(x.gio ?? x.gio_thuc, 2)} giờ</small></span></a>`;
 
 // ---------------- Trang Home ----------------
@@ -315,7 +315,7 @@ function veNguoi(p) {
   <section class="hero ${H.vao()}" data-k="${p.ma}-hero" style="--mau:${MAU[p.ma]}"><i class="luoi-nen" aria-hidden="true"></i>
     <div><p class="nhan"><span class="go-may" data-go="${tenThang(m)} · ${p.vi_tri} · ngạch ${p.ngach} – ${p.bac}"></span><span class="hl-con-tro">▍</span></p>
       <h1><span class="so" data-dem="${t.diem}" data-so="2">${so(t.diem, 2)}</span><small>/ ${so(t.nguong)} điểm</small></h1>
-      <p class="than">${esc(p.ho_ten)} · tiền điểm ước tính <b class="so" data-dem="${t.tien.tong}" data-tien>${tien(t.tien.tong)}</b>${t.tien.vuot ? ` (gồm ${tien(t.tien.vuot)} vượt ngưỡng)` : ''}</p>
+      <p class="than">${esc(p.ho_ten)} · tiền điểm ước tính <b class="so" data-dem="${t.tien.tong}" data-tien>${tien(t.tien.tong)}</b>${t.tien.vuot ? ` (gồm ${tien(t.tien.vuot)} vượt ngưỡng)` : ''}${t.thieu_gio.length ? ` · <span class="vang">${t.thieu_gio.length} thẻ đã xong chưa tính được điểm</span>` : ''}</p>
       ${trangTri(12)}</div>
     ${vong(t.phan_tram, MAU[p.ma], p.ma)}
   </section>
@@ -332,8 +332,8 @@ function veNguoi(p) {
     ${boards.length > 1 ? `<div class="loc" data-ma="${p.ma}"><button type="button" data-b="" aria-pressed="${!chon}">Tất cả</button>${boards.map((b) => `<button type="button" data-b="${esc(b)}" aria-pressed="${chon === b}">${esc(b)}</button>`).join('')}</div>` : ''}
     <div class="ds">${ds.slice(0, n).map((x, i) => dongThe(x, i)).join('') || '<p class="rong hl-noi">Chưa có thẻ xong trong tháng.</p>'}</div>
     ${ds.length > n ? `<button class="them" type="button" data-them="${p.ma}">Xem thêm ${Math.min(30, ds.length - n)} thẻ</button>` : ''}</section>
-  ${t.thieu_gio.length ? `<section class="vung" data-lo data-k="${p.ma}-thieu">${tieuDe(IC.gio, 'Thẻ chưa có giờ', `${t.thieu_gio.length} thẻ`)}
-    <p class="mo-ta">Thẻ đã xong nhưng không có ô GIỜ ƯỚC và không thuộc loại có định mức sẵn — điền GIỜ ƯỚC trên Trello là được tính.</p>
+  ${t.thieu_gio.length ? `<section class="vung" data-lo data-k="${p.ma}-thieu">${tieuDe(IC.gio, 'Thẻ đã xong nhưng chưa tính được điểm', `${t.thieu_gio.length} thẻ`)}
+    <p class="mo-ta">Phần lớn là thẻ công đoạn máy chưa có định mức (mẫu công đoạn mới, OQC/QC) — bảng định mức hiện chỉ có máy rang 30 kg, tách đá, silo 500 kg lấy từ bảng chấm chính thức T10. Có định mức hoặc điền GIỜ ƯỚC trên Trello là được tính; điểm thật sẽ cao hơn số ở trên.</p>
     <div class="ds">${t.thieu_gio.map((x, i) => dongThe({ ...x, diem: 0 }, i)).join('')}</div></section>` : ''}
   <section class="vung" data-lo data-k="${p.ma}-ct">${tieuDe(IC.luoi, 'Cách tính')}
     <div class="cong-thuc">
