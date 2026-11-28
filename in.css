@@ -1,6 +1,50 @@
 /* Bản in A4 có màu — chỉ hiện khi in / Lưu thành PDF. Phẳng: không gradient, không đổ bóng, không vạch màu mép. */
 #ban-in { display: none; }
 
+/* ---- Hộp chọn xuất PDF (màn hình) — phẳng, cùng tông web ---- */
+.hop-pdf { width: min(620px, calc(100vw - 20px)); max-height: min(88dvh, 820px); padding: 0; border: 1px solid var(--vien); border-radius: var(--r2);
+  background: var(--mat); color: var(--chu); overscroll-behavior: contain; }
+.hop-pdf::backdrop { background: rgb(10 12 15 / .72); }
+.hop-pdf[open] { animation: hp-vao var(--vua) var(--ra); }
+@keyframes hp-vao { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+.hu-tat .hop-pdf[open] { animation: none; }
+.hp-khung { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px 0; }
+.hp-dau { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.hp-dau h2 { margin: 2px 0 6px; font-size: 20px; font-weight: 700; }
+.hp-dau h2 small { display: block; font-size: 13px; font-weight: 400; color: var(--mo); margin-top: 2px; }
+.hp-dong { width: 40px; height: 40px; border-radius: var(--r); border: 1px solid var(--vien); background: transparent; color: var(--chu2); font-size: 22px; line-height: 1; cursor: pointer; }
+.hp-dong:hover { background: var(--mat2); color: var(--chu); }
+.hop-pdf fieldset { border: 0; border-top: 1px solid var(--vien); margin: 6px 0 0; padding: 10px 0 4px; min-width: 0; }
+.hop-pdf legend { display: flex; align-items: center; gap: 10px; padding: 0; margin-bottom: 8px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--mo); }
+.hp-lk { border: 0; background: none; color: var(--lam); font: inherit; letter-spacing: 0; text-transform: none; font-weight: 500; cursor: pointer; padding: 4px 2px; min-height: 32px; }
+.hp-lk:hover { text-decoration: underline; }
+.hp-hang { display: flex; flex-wrap: wrap; gap: 8px; }
+.hp-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--vien2);
+  background: var(--mat2); color: var(--chu2); font: 500 14px/1.2 inherit; cursor: pointer; transition: background var(--nhanh), color var(--nhanh), border-color var(--nhanh); touch-action: manipulation; }
+.hp-chip i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.hp-chip:hover { border-color: var(--mo2); color: var(--chu); }
+.hp-chip[aria-pressed="true"] { background: var(--chu); color: var(--nen); border-color: var(--chu); }
+.hp-chip:active { transform: scale(.97); }
+.hp-luoi { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px; }
+.hp-muc { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 9px 12px; border-radius: var(--r); background: var(--mat2); border: 1px solid transparent; cursor: pointer; }
+.hp-muc:hover { border-color: var(--vien2); }
+.hp-muc input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--xanh); flex: none; cursor: pointer; }
+.hp-muc b { display: block; font-size: 14px; font-weight: 600; }
+.hp-muc small { display: block; font-size: 12px; color: var(--mo); margin-top: 1px; }
+.hp-ghi { margin: 8px 0 0; font-size: 12px; color: var(--mo); }
+.hp-chan { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px -18px 0; padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  background: var(--mat); border-top: 1px solid var(--vien); }
+.hp-tom { flex: 1 1 220px; margin: 0; font-size: 13px; color: var(--chu2); }
+.hp-xuat { min-height: 44px; padding: 0 18px; }
+.hp-xuat[disabled] { opacity: .45; cursor: not-allowed; }
+.hop-pdf :focus-visible { outline: 2px solid var(--lam); outline-offset: 2px; }
+@media (max-width: 520px) {
+  .hop-pdf { width: 100vw; max-width: 100vw; max-height: 92dvh; margin: auto 0 0; border-radius: var(--r2) var(--r2) 0 0; }
+  .hp-luoi { grid-template-columns: 1fr; }
+  .hp-tom { flex-basis: 100%; }
+  .hp-chan .nut-phu, .hp-xuat { flex: 1 1 0; justify-content: center; min-height: 44px; }
+}
+
 @page {
   size: A4 portrait;
   margin: 13mm 12mm 15mm;
@@ -78,6 +122,7 @@
   .bi-bang .bi-mo { color: #9ca3af; font-family: 'Fira Code', monospace; font-size: 7.6pt; }
   .bi-bang .nguon { font-size: 7.8pt; color: #374151; }
   .bi-bang.ct td:first-child { font-size: 8.4pt; }
+  .bi-bang tr.bi-tong td { background: #eef1f4 !important; border-bottom: 0; font-size: 9pt; padding-top: 6px; padding-bottom: 6px; }
   .bi-bang .bi-cham { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
   .bi-bang .bi-hang { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: #fff; font: 700 8.5pt 'Fira Code', monospace; }
 
