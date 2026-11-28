@@ -4,40 +4,60 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#0b0d10">
-  <title>Điểm tháng</title>
+  <meta name="theme-color" content="#17191d">
+  <title>Điểm tháng · Tổ điện</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
-  <meta http-equiv="Cache-Control" content="no-cache">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=7">
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-  <header class="nav">
-    <a class="logo" href="./" aria-label="Điểm tháng">
-      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="#3ddc97" stroke-width="2.2"/><path d="M10 4 A6 6 0 0 1 16 10" fill="none" stroke="#f5b93b" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span>Điểm tháng</span>
+  <canvas id="nen-hat" aria-hidden="true"></canvas>
+  <div class="thanh-cuon" id="thanh-cuon" aria-hidden="true"></div>
+
+  <header class="dau" id="dau">
+    <a class="logo" href="#home" aria-label="Điểm tháng — trang chủ">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="logo-vong"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/><path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span>Điểm tháng <b>· Tổ điện</b></span>
     </a>
-    <nav class="thang" id="chon-thang" aria-label="Chọn tháng"></nav>
-    <button class="ghost" id="nut-khoa" type="button" hidden>Khoá lại</button>
+    <nav class="tab" id="tab" aria-label="Chọn người" hidden></nav>
+    <div class="cong-cu" id="cong-cu" hidden>
+      <nav class="thang" id="chon-thang" aria-label="Chọn tháng"></nav>
+      <button class="nut-phu" id="nut-hu" type="button" aria-pressed="true" title="Bật / tắt hiệu ứng">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+        <span>Hiệu ứng</span>
+      </button>
+      <button class="nut-phu" id="nut-khoa" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span>Khoá lại</span>
+      </button>
+    </div>
   </header>
 
-  <main>
+  <main id="chinh">
     <section class="man-khoa" id="man-khoa">
-      <p class="nhan">Riêng tư · đã mã hoá</p>
-      <h1 class="display">Điểm<br>tháng.</h1>
-      <p class="than">Điểm thẻ việc trên Trello theo quy chế lương, khoán và thưởng. Số liệu được mã hoá, mở bằng mật khẩu.</p>
-      <form class="mo" id="form-mo" autocomplete="off">
-        <label class="an-nhan" for="mat-khau">Mật khẩu</label>
-        <input id="mat-khau" type="password" inputmode="numeric" maxlength="32" placeholder="Mật khẩu" autocomplete="new-password" spellcheck="false">
-        <button class="nut" id="nut-mo" type="submit">Mở</button>
-      </form>
-      <p class="bao" id="bao" role="status" aria-live="polite"></p>
+      <div class="khoa-hop">
+        <svg class="khoa-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="21" width="28" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="khoa-quai" d="M16 21v-6a8 8 0 0 1 16 0v6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="31" r="2.6" fill="currentColor"/></svg>
+        <p class="nhan">Riêng tư · đã mã hoá</p>
+        <h1 class="display"><span>Điểm</span> <span>tháng</span> <span>tổ</span> <span>điện.</span></h1>
+        <p class="than">Điểm thẻ việc trên Trello của tổ điện. Số liệu mã hoá, mở bằng mật khẩu.</p>
+        <form class="mo" id="form-mo" autocomplete="off" onsubmit="return false">
+          <label class="an-nhan" for="mat-khau">Mật khẩu</label>
+          <input id="mat-khau" type="password" inputmode="numeric" maxlength="32" placeholder="Mật khẩu" autocomplete="new-password" spellcheck="false">
+          <button class="nut" id="nut-mo" type="submit"><span>Mở</span></button>
+        </form>
+        <p class="bao" id="bao" role="status" aria-live="polite"></p>
+      </div>
     </section>
 
     <div id="noi-dung" hidden></div>
   </main>
 
-  <script src="app.js?v=5" type="module"></script>
+  <nav class="tab-duoi" id="tab-duoi" aria-label="Chọn người" hidden></nav>
+  <div class="toast-khu" id="toast" role="status" aria-live="polite"></div>
+  <button class="len-dau" id="len-dau" type="button" aria-label="Lên đầu trang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="app.js?v=7" type="module"></script>
 </body>
 </html>
